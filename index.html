@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-Time Sensor Data</title>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
+        }
+        .data-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .data-item p {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Real-Time Sensor Data</h1>
+        <div id="data-container" class="data-container"></div>
+    </div>
+
+    <script>
+        // Your Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyBS0U_dmzk_6puGKehllpUwB_YVbMtxPvQ",
+            authDomain: "arduinoproject-74d90.firebaseapp.com",
+            databaseURL: "https://arduinoproject-74d90-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "arduinoproject-74d90",
+            storageBucket: "arduinoproject-74d90.appspot.com",
+            messagingSenderId: "430408971050",
+            appId: "1:430408971050:web:ba70889eca97db6bb3a453"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var database = firebase.database();
+
+        // Reference to your sensor_data node
+        var ref = database.ref('sensor_data').limitToLast(1);
+
+        // Function to update the UI with new data
+        function updateUI(data) {
+            var container = document.getElementById('data-container');
+            container.innerHTML = ''; // Clear the container
+
+            var dataItem = document.createElement('div');
+            dataItem.className = 'data-item';
+            dataItem.innerHTML = `
+                <p>Distance1: ${data.Distance1} cm</p>
+                <p>Distance2: ${data.Distance2} cm</p>
+                <p>Status: ${data.Status}</p>
+                <p>Timestamp: ${data.timestamp}</p>
+            `;
+            container.appendChild(dataItem);
+        }
+
+        // Listen for changes in the database
+        ref.on('child_added', function(snapshot) {
+            var data = snapshot.val();
+            updateUI(data);
+        });
+    </script>
+</body>
+</html>
